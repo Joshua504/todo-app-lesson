@@ -17,13 +17,13 @@ openTaskFormBtn.addEventListener("click", () => {
 	taskForm.classList.toggle("hidden");
 });
 closeTaskFormBtn.addEventListener("click", () => {
-  const formInputsContainValues =
+	const formInputsContainValues =
 		titleInput.value || dateInput.value || descriptionInput.value;
-    if (formInputsContainValues) {
-      confirmCloseDialog.showModal();
-    } else {
-      reset();
-    }
+	if (formInputsContainValues) {
+		confirmCloseDialog.showModal();
+	} else {
+		reset();
+	}
 });
 cancelBtn.addEventListener("click", () => {
 	confirmCloseDialog.close();
@@ -33,33 +33,30 @@ discardBtn.addEventListener("click", () => {
 	reset();
 });
 
-const addOrUpdateTask = () =>{
-  	const dataArrIndex = taskData.findIndex(
-			(item) => item.id === currentTask.id
-		);
+const addOrUpdateTask = () => {
+	const dataArrIndex = taskData.findIndex((item) => item.id === currentTask.id);
 
-		const taskObj = {
-			id: `${titleInput.value
-				.toLowerCase()
-				.split(" ")
-				.join("-")}-${Date.now()}`,
-			title: titleInput.value,
-			date: dateInput.value,
-			description: descriptionInput.value,
-		};
+	const taskObj = {
+		id: `${titleInput.value.toLowerCase().split(" ").join("-")}-${Date.now()}`,
+		title: titleInput.value,
+		date: dateInput.value,
+		description: descriptionInput.value,
+	};
 
-		if (dataArrIndex === -1) {
-			taskData.unshift(taskObj);
-			console.log("taskData: ", taskData);
-		}
+	if (dataArrIndex === -1) {
+		taskData.unshift(taskObj);
+		console.log("taskData: ", taskData);
+	}else{
+		taskData[dataArrIndex] = taskObj;
+	}
 
-    updateTaskContainer();
-    reset()
-}
+	updateTaskContainer();
+	reset();
+};
 
 const updateTaskContainer = () => {
-  tasksContainer.innerHTML = "";
-  taskData.forEach(({ id, title, date, description }) => {
+	tasksContainer.innerHTML = "";
+	taskData.forEach(({ id, title, date, description }) => {
 		tasksContainer.innerHTML += `
     <div class="task" id="${id}">
       <p><strong>Title:</strong>${title}</p>
@@ -69,13 +66,34 @@ const updateTaskContainer = () => {
       <button onclick="deleteTask(this)" type="button" class="btn">Delete</button>
     </div>`;
 	});
-}
+};
 
 taskForm.addEventListener("submit", (e) => {
 	e.preventDefault();
 
-	addOrUpdateTask()
+	addOrUpdateTask();
 });
+
+const deleteTask = (buttonEl) => {
+	const dataArrIndex = taskData.findIndex(
+		(item) => item.id === buttonEl.parentElement.id
+	);
+	buttonEl.parentElement.remove();
+	taskData.splice(dataArrIndex, 1);
+};
+
+const editTask = (buttonEl) => {
+	const dataArrIndex = taskData.findIndex(
+		(item) => item.id === buttonEl.parentElement.id
+	);
+	currentTask = taskData[dataArrIndex];
+	titleInput.value = currentTask.title;
+	dateInput.value = currentTask.date;
+	descriptionInput.value = currentTask.description;
+	addOrUpdateTaskBtn.innerText = "Update Task";
+	taskForm.classList.toggle("hidden");
+
+}
 
 const reset = () => {
 	titleInput.value = "";
